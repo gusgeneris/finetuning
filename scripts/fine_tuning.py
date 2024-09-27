@@ -142,10 +142,14 @@ print(os.listdir('data/test'))
 
 
 # Cargar los datos de entrenamiento y prueba
-train_data = datasets.ImageFolder('data/train', transform=transform)
+# train_data = datasets.ImageFolder('data/train', transform=transform)
+
+train_data = datasets.ImageFolder('/content/drive/MyDrive/data/train', transform=transform)
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
-test_data = datasets.ImageFolder('data/test', transform=transform)
+# test_data = datasets.ImageFolder('data/test', transform=transform)
+
+train_data = datasets.ImageFolder('/content/drive/MyDrive/data/test', transform=transform)
 test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 
 # Descargar el modelo desde Hugging Face Hub
