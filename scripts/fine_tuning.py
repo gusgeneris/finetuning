@@ -127,7 +127,7 @@ import torch.nn as nn
 from huggingface_hub import hf_hub_download
 from google.colab import drive
 
-
+drive.mount('/content/drive')
 # Ver el contenido de la carpeta 'data' para asegurarse de que las subcarpetas 'train' y 'test' existen
 print("Contenido de la carpeta 'data':")
 print(os.listdir('data'))
