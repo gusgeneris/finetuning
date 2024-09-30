@@ -127,18 +127,18 @@ import torch.nn as nn
 from huggingface_hub import hf_hub_download
 from google.colab import drive
 
-drive.mount('/content/drive')
-# Ver el contenido de la carpeta 'data' para asegurarse de que las subcarpetas 'train' y 'test' existen
-print("Contenido de la carpeta 'data':")
-print(os.listdir('data'))
+# drive.mount('/content/drive')
+# # Ver el contenido de la carpeta 'data' para asegurarse de que las subcarpetas 'train' y 'test' existen
+# print("Contenido de la carpeta 'data':")
+# print(os.listdir('data'))
 
-# Ver el contenido de la carpeta 'train'
-print("\nContenido de 'data/train':")
-print(os.listdir('data/train'))
+# # Ver el contenido de la carpeta 'train'
+# print("\nContenido de 'data/train':")
+# print(os.listdir('data/train'))
 
-# Ver el contenido de la carpeta 'test'
-print("\nContenido de 'data/test':")
-print(os.listdir('data/test'))
+# # Ver el contenido de la carpeta 'test'
+# print("\nContenido de 'data/test':")
+# print(os.listdir('data/test'))
 
 
 # Cargar los datos de entrenamiento y prueba
