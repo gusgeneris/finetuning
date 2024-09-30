@@ -164,12 +164,6 @@ test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 # Descargar el modelo desde Hugging Face Hub
 model_path = hf_hub_download(repo_id="Zhengyi/CRM", filename="CRM.pth")
 
-# Cargar los datos de entrenamiento y prueba
-train_data = datasets.ImageFolder('data/train', transform=transform)
-train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
-
-test_data = datasets.ImageFolder('data/test', transform=transform)
-test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 
 # Cargar el modelo preentrenado
 model = torch.load(model_path)
