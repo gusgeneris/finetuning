@@ -144,6 +144,15 @@ from google.colab import drive
 # Cargar los datos de entrenamiento y prueba
 # train_data = datasets.ImageFolder('data/train', transform=transform)
 
+
+
+# Definir transformaciones para las imágenes
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
 train_data = datasets.ImageFolder('/content/drive/MyDrive/data/train', transform=transform)
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
@@ -154,15 +163,6 @@ test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 
 # Descargar el modelo desde Hugging Face Hub
 model_path = hf_hub_download(repo_id="Zhengyi/CRM", filename="CRM.pth")
-
-# Definir transformaciones para las imágenes
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
-
-
 
 # Cargar los datos de entrenamiento y prueba
 train_data = datasets.ImageFolder('data/train', transform=transform)
