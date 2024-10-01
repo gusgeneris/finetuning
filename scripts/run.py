@@ -5,7 +5,7 @@ import torch.optim as optim
 import torch.nn as nn
 from huggingface_hub import hf_hub_download
 from google.colab import drive
-from model.crm import CRM  # Asegúrate de definir tu modelo CRM
+from CRM import CRM  # Asegúrate de definir tu modelo CRM
 
 # Definir transformaciones para las imágenes
 transform = transforms.Compose([
