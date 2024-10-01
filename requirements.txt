@@ -1,3 +1,8 @@
 torch 
 torchvision
 gdown
+trimesh
+TetTexNet
+UNetPP
+Renderer
+xatlas
