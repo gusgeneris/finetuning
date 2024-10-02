@@ -1,3 +1,13 @@
+import sys
+import os
+
+# Añade la ruta de la raíz del proyecto al sys.path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(project_root)
+
+# Verifica si la ruta fue añadida correctamente
+print(sys.path)
+
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
