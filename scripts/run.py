@@ -34,7 +34,9 @@ test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 # Descargar los pesos preentrenados del modelo CRM desde Hugging Face Hub
 model_path = hf_hub_download(repo_id="Zhengyi/CRM", filename="CRM.pth")
 
-specs = json.load(open("configs/specs_objaverse_total.json"))
+# specs = json.load(open("configs/specs_objaverse_total.json"))
+specs = json.load(open("/content/finetuning/configs/specs_objaverse_total.json"))
+
 # Cargar el modelo preentrenado CRM (asegúrate de definir la clase CRM antes de cargar los pesos)
 model = CRM(specs).to("cuda")  # Definir correctamente la clase CRM
 model.load_state_dict(torch.load(model_path))
