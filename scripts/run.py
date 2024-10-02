@@ -49,6 +49,11 @@ for param in model.parameters():
 for param in model.decoder.parameters():  # Ajusta según las capas finales de tu modelo CRM
     param.requires_grad = True
 
+for name, param in model.named_parameters():
+    print(name, param.requires_grad)
+    print('params')
+
+
 # Configurar el optimizador
 optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001)
 
