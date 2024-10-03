@@ -23,22 +23,23 @@ class Dummy:
 class CRM(nn.Module):
     def __init__(self, specs):
 
-        self.unet2 = UNetPP(in_channels=self.dec.c_dim)  # Configurar UNet++
-    self.decoder = TetTexNet(plane_reso=self.dec.plane_resolution, fea_concat=self.arch.fea_concat)  # Decodificador
-    self.sdfMlp = SdfMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)  # MLP para SDF
-    self.rgbMlp = RgbMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)  # MLP para colores RGB
-    if self.geo_type == "flex":
-        self.weightMlp = nn.Sequential(
-            nn.Linear(mlp_chnl_s * 32 * 8, 512),
-            nn.SiLU(),
-            nn.Linear(512, 21)
-        )  # MLP adicional para el cálculo de pesos si el tipo de geometría es flexible
-
-
-
         super(CRM, self).__init__()
 
         self.specs = specs
+
+        self.unet2 = UNetPP(in_channels=self.dec.c_dim)  # Configurar UNet++
+        self.decoder = TetTexNet(plane_reso=self.dec.plane_resolution, fea_concat=self.arch.fea_concat)  # Decodificador
+        self.sdfMlp = SdfMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)  # MLP para SDF
+        self.rgbMlp = RgbMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)  # MLP para colores RGB
+        if self.geo_type == "flex":
+            self.weightMlp = nn.Sequential(
+                nn.Linear(mlp_chnl_s * 32 * 8, 512),
+                nn.SiLU(),
+                nn.Linear(512, 21)
+            )  # MLP adicional para el cálculo de pesos si el tipo de geometría es flexible
+
+
+
         # configs
         input_specs = specs["Input"]
         self.input = Dummy()
