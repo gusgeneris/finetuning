@@ -71,16 +71,29 @@ class CRM(nn.Module):
         self.scheduler = DDIMScheduler.from_pretrained("stabilityai/stable-diffusion-2-1-base", subfolder="scheduler")
 
 
+            # Configuración de UNet++
         self.unet2 = UNetPP(in_channels=self.dec.c_dim)  # Configurar UNet++
-        self.decoder = TetTexNet(plane_reso=self.dec.plane_resolution, fea_concat=self.arch.fea_concat)  # Decodificador
-        self.sdfMlp = SdfMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)  # MLP para SDF
-        self.rgbMlp = RgbMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)  # MLP para colores RGB
+        print(f"UNet++ configurado con in_channels: {self.dec.c_dim}")
+
+        # Decodificador
+        self.decoder = TetTexNet(plane_reso=self.dec.plane_resolution, fea_concat=self.arch.fea_concat)
+        print(f"Decodificador configurado con plane_resolution: {self.dec.plane_resolution}")
+
+        # MLP para SDF
+        self.sdfMlp = SdfMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)
+        print(f"MLP para SDF configurado con canales: {mlp_chnl_s * 32}")
+
+        # MLP para colores RGB
+        self.rgbMlp = RgbMlp(mlp_chnl_s * 32, 512, bias=self.arch.mlp_bias)
+        print(f"MLP para RGB configurado con canales: {mlp_chnl_s * 32}")
+
         if self.geo_type == "flex":
             self.weightMlp = nn.Sequential(
                 nn.Linear(mlp_chnl_s * 32 * 8, 512),
                 nn.SiLU(),
                 nn.Linear(512, 21)
             )  # MLP adicional para el cálculo de pesos si el tipo de geometría es flexible
+            print(f"MLP de pesos configurado con entrada de tamaño: {mlp_chnl_s * 32 * 8}")
 
     
     # def forward(self, inputs):
