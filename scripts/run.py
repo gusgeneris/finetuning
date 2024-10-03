@@ -5,9 +5,6 @@ import os
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(project_root)
 
-# Verifica si la ruta fue añadida correctamente
-print(sys.path)
-
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
@@ -41,6 +38,7 @@ specs = json.load(open("/content/finetuning/configs/specs_objaverse_total.json")
 model = CRM(specs).to("cuda")  # Definir correctamente la clase CRM
 model.train() 
 model.load_state_dict(torch.load(model_path))
+print("Pesos cargados con éxito.")
 
 # Congelar las capas iniciales del modelo para mantener las características aprendidas
 for param in model.parameters():
@@ -67,6 +65,26 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 num_epochs = 10
+# for epoch in range(num_epochs):
+#     model.train()
+#     running_loss = 0.0
+#     for i, data in enumerate(train_loader, 0):
+#         inputs, targets = data
+#         inputs, targets = inputs.to(device), targets.to(device)
+
+#         optimizer.zero_grad()
+#         outputs = model(inputs)
+#         loss = criterion(outputs, targets)
+#         loss.backward()
+#         optimizer.step()
+
+#         running_loss += loss.item()
+#         if i % 10 == 9:
+#             # print(f'[{epoch + 1}, {i + 1}] pérdida: {running_loss / 10:.3f}')
+#             running_loss = 0.0
+
+
+# Entrenamiento del modelo
 for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
@@ -74,15 +92,22 @@ for epoch in range(num_epochs):
         inputs, targets = data
         inputs, targets = inputs.to(device), targets.to(device)
 
+        # Verifica la forma de los inputs y targets
+        print(f'Inputs shape: {inputs.shape}, Targets shape: {targets.shape}')
+
         optimizer.zero_grad()
-        outputs = model(inputs)
+        outputs = model(inputs)  # Esto debería llamar a model.forward()
+        
+        # Verifica la forma de las salidas
+        print(f'Outputs shape: {outputs.shape}')
+
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
 
         running_loss += loss.item()
         if i % 10 == 9:
-            # print(f'[{epoch + 1}, {i + 1}] pérdida: {running_loss / 10:.3f}')
+            print(f'[{epoch + 1}, {i + 1}] pérdida: {running_loss / 10:.3f}')
             running_loss = 0.0
 
 # Evaluación en el conjunto de prueba

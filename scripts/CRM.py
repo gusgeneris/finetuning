@@ -96,10 +96,7 @@ class CRM(nn.Module):
             print(f"MLP de pesos configurado con entrada de tamaño: {mlp_chnl_s * 32 * 8}")
 
         print(f"Dimensiones de inputs: {inputs.size()}")
-
-        features = self.unet2(inputs)
-        print(f"Dimensiones de la salida de UNet++: {features.size()}")
-        print(f"Dimensiones de learned_plane: {learned_plane.size()}")
+        
 
 
 
