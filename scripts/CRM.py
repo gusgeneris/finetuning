@@ -87,6 +87,9 @@ class CRM(nn.Module):
         # Aplicar UNet++
         features = self.unet2(inputs)
 
+          # Verifica las dimensiones antes de la concatenación
+        print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
+
         # Verificar si las dimensiones de learned_plane y x coinciden
         if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
             # Redimensionar learned_plane para que coincida con las dimensiones de x
