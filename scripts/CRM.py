@@ -95,7 +95,7 @@ class CRM(nn.Module):
             )  # MLP adicional para el cálculo de pesos si el tipo de geometría es flexible
             print(f"MLP de pesos configurado con entrada de tamaño: {mlp_chnl_s * 32 * 8}")
 
-        print(f"Dimensiones de inputs: {inputs.size()}")
+        # print(f"Dimensiones de inputs: {inputs.size()}")
         
 
 
