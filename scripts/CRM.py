@@ -15,6 +15,7 @@ from model.archs.unet import UNetPP
 from util.renderer import Renderer
 from model.archs.mlp_head import SdfMlp, RgbMlp
 import xatlas
+import torch.nn.functional as F
 
 
 class Dummy:
@@ -81,17 +82,26 @@ class CRM(nn.Module):
                 nn.Linear(512, 21)
             )  # MLP adicional para el cálculo de pesos si el tipo de geometría es flexible
 
-
     def forward(self, inputs):
-        # Aplicar UNetPP
+        # Aplicar UNet++
         features = self.unet2(inputs)
+        
+        # Asegúrate de que las características tengan las dimensiones correctas si es necesario
+        if features.size(2) != inputs.size(2) or features.size(3) != inputs.size(3):
+            inputs_resized = F.interpolate(inputs, size=(features.size(2), features.size(3)), mode='bilinear', align_corners=False)
+        else:
+            inputs_resized = inputs
+
         # Decodificar las características
         verts = self.decoder(features)
+
         # Predecir SDF y deformaciones
         sdf_outputs = self.sdfMlp(verts)
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
-        # Aplicar renderer si es necesario
-        rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+
+        # Aplicar renderer si es necesario (concatenar características y deformaciones)
+        rendered_output = self.renderer(inputs_resized, pred_sdf, deformation, verts)
+
         return rendered_output
 
 
