@@ -86,7 +86,7 @@ class CRM(nn.Module):
         # Aplicar UNet++
         features = self.unet2(inputs)
         
-        # Asegúrate de que las características tengan las dimensiones correctas si es necesario
+        # Asegurarse de que las dimensiones coincidan para la concatenación
         if features.size(2) != inputs.size(2) or features.size(3) != inputs.size(3):
             inputs_resized = F.interpolate(inputs, size=(features.size(2), features.size(3)), mode='bilinear', align_corners=False)
         else:
@@ -103,6 +103,7 @@ class CRM(nn.Module):
         rendered_output = self.renderer(inputs_resized, pred_sdf, deformation, verts)
 
         return rendered_output
+
 
 
     def decode(self, data, triplane_feature2):
