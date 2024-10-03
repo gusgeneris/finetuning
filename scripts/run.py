@@ -50,9 +50,9 @@ for param in model.parameters():
 for param in model.decoder.parameters():  # Ajusta según las capas finales de tu modelo CRM
     param.requires_grad = True
 
-for name, param in model.named_parameters():
-    print(name, param.requires_grad)
-    print('params')
+# for name, param in model.named_parameters():
+#     print(name, param.requires_grad)
+#     print('params')
 
 
 # Configurar el optimizador
@@ -82,7 +82,7 @@ for epoch in range(num_epochs):
 
         running_loss += loss.item()
         if i % 10 == 9:
-            print(f'[{epoch + 1}, {i + 1}] pérdida: {running_loss / 10:.3f}')
+            # print(f'[{epoch + 1}, {i + 1}] pérdida: {running_loss / 10:.3f}')
             running_loss = 0.0
 
 # Evaluación en el conjunto de prueba
