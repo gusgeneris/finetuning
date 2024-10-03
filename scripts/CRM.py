@@ -107,27 +107,52 @@ class CRM(nn.Module):
     #     return rendered_output
 
 
+    # def forward(self, inputs):
+    #     # Aplicar UNet++
+    #     features = self.unet2(inputs)
+        
+    #     # Asegúrate de que las dimensiones coincidan antes de la concatenación
+    #     if features.size(2) != learned_plane.size(2) or features.size(3) != learned_plane.size(3):
+    #         # Redimensiona learned_plane para que coincida con las dimensiones espaciales de features
+    #         learned_plane = F.interpolate(learned_plane, size=(features.size(2), features.size(3)), mode='bilinear', align_corners=False)
+        
+    #     # Concatenar las características después de asegurarse que las dimensiones coincidan
+    #     x = torch.cat([features, learned_plane], dim=1)
+        
+    #     # Continúa con el resto del forward
+    #     verts = self.decoder(x)
+    #     sdf_outputs = self.sdfMlp(verts)
+    #     pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
+        
+    #     # Aplicar el renderer si es necesario
+    #     rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+        
+    #     return rendered_output
+
+    #     import torch.nn.functional as F
+
     def forward(self, inputs):
-        # Aplicar UNet++
+        # Obtiene las características de UNet++
         features = self.unet2(inputs)
         
-        # Asegúrate de que las dimensiones coincidan antes de la concatenación
+        # Verifica y ajusta las dimensiones de learned_plane para que coincidan con features
         if features.size(2) != learned_plane.size(2) or features.size(3) != learned_plane.size(3):
-            # Redimensiona learned_plane para que coincida con las dimensiones espaciales de features
+            # Ajusta learned_plane para que tenga las mismas dimensiones que features
             learned_plane = F.interpolate(learned_plane, size=(features.size(2), features.size(3)), mode='bilinear', align_corners=False)
         
-        # Concatenar las características después de asegurarse que las dimensiones coincidan
+        # Concatenar las características una vez que las dimensiones coincidan
         x = torch.cat([features, learned_plane], dim=1)
         
-        # Continúa con el resto del forward
+        # Resto del flujo de trabajo
         verts = self.decoder(x)
         sdf_outputs = self.sdfMlp(verts)
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
         
-        # Aplicar el renderer si es necesario
+        # Aplica el renderer si es necesario
         rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
         
-        return rendered_outp
+    return rendered_output
+
 
 
     def decode(self, data, triplane_feature2):
