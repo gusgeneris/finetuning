@@ -131,19 +131,46 @@ class CRM(nn.Module):
 
     #     import torch.nn.functional as F
 
+    # def forward(self, inputs):
+    #     # Obtiene las características de UNet++
+    #     features = self.unet2(inputs)
+        
+    #     # Verifica y ajusta las dimensiones de learned_plane para que coincidan con features
+    #     if features.size(2) != learned_plane.size(2) or features.size(3) != learned_plane.size(3):
+    #         # Ajusta learned_plane para que tenga las mismas dimensiones que features
+    #         learned_plane = F.interpolate(learned_plane, size=(features.size(2), features.size(3)), mode='bilinear', align_corners=False)
+        
+    #     # Concatenar las características una vez que las dimensiones coincidan
+    #     x = torch.cat([features, learned_plane], dim=1)
+        
+    #     # Resto del flujo de trabajo
+    #     verts = self.decoder(x)
+    #     sdf_outputs = self.sdfMlp(verts)
+    #     pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
+        
+    #     # Aplica el renderer si es necesario
+    #     rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+        
+    #     return rendered_output
+
     def forward(self, inputs):
-        # Obtiene las características de UNet++
+        # Obtén las características de UNet++
         features = self.unet2(inputs)
         
-        # Verifica y ajusta las dimensiones de learned_plane para que coincidan con features
-        if features.size(2) != learned_plane.size(2) or features.size(3) != learned_plane.size(3):
-            # Ajusta learned_plane para que tenga las mismas dimensiones que features
-            learned_plane = F.interpolate(learned_plane, size=(features.size(2), features.size(3)), mode='bilinear', align_corners=False)
+        # Obtén las dimensiones de features
+        features_size = features.size()
         
-        # Concatenar las características una vez que las dimensiones coincidan
-        x = torch.cat([features, learned_plane], dim=1)
+        # Ajusta learned_plane para que tenga las mismas dimensiones que features en altura y ancho
+        if features_size[2] != learned_plane.size(2) or features_size[3] != learned_plane.size(3):
+            learned_plane = F.interpolate(learned_plane, size=(features_size[2], features_size[3]), mode='bilinear', align_corners=False)
         
-        # Resto del flujo de trabajo
+        # Verifica de nuevo que las dimensiones coincidan antes de concatenar
+        if features.size(2) == learned_plane.size(2) and features.size(3) == learned_plane.size(3):
+            x = torch.cat([features, learned_plane], dim=1)
+        else:
+            raise RuntimeError(f"Las dimensiones no coinciden: features ({features.size()}) y learned_plane ({learned_plane.size()})")
+        
+        # Continuar con el flujo de trabajo
         verts = self.decoder(x)
         sdf_outputs = self.sdfMlp(verts)
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
@@ -152,6 +179,7 @@ class CRM(nn.Module):
         rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
         
         return rendered_output
+
 
 
 
