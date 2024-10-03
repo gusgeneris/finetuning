@@ -100,30 +100,20 @@ class CRM(nn.Module):
 
 
 
-    
     def forward(self, inputs):
-        # Aplicar UNet++
         print('zasz')
         features = self.unet2(inputs)
 
-          # Verifica las dimensiones antes de la concatenación
+        # Aquí asegúrate de que x es el tensor correcto que estás utilizando
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
-        # Verificar si las dimensiones de learned_plane y x coinciden
+        # Redimensionar learned_plane si es necesario
         if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
-            # Redimensionar learned_plane para que coincida con las dimensiones de x
             learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
 
         # Concatenar las características
         x = torch.cat([x, learned_plane], dim=1)
 
-        # Continuar con el proceso
-        verts = self.decoder(features)
-        sdf_outputs = self.sdfMlp(verts)
-        pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
-        rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
-        
-        return rendered_output
 
 
 
