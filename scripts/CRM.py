@@ -154,31 +154,43 @@ class CRM(nn.Module):
     #     return rendered_output
 
     
+    # def forward(self, inputs):
+    #     # Obtén las características de UNet++
+    #     features = self.unet2(inputs)
+
+    #     # Ajusta learned_plane con padding si es necesario
+    #     if learned_plane.size(2) < features.size(2) or learned_plane.size(3) < features.size(3):
+    #         padding = (0, features.size(3) - learned_plane.size(3), 
+    #                 0, features.size(2) - learned_plane.size(2))  # (left, right, top, bottom)
+    #         learned_plane = F.pad(learned_plane, padding, "constant", 0)
+
+    #     # Verifica que las dimensiones coincidan antes de concatenar
+    #     if features.size(2) == learned_plane.size(2) and features.size(3) == learned_plane.size(3):
+    #         x = torch.cat([features, learned_plane], dim=1)
+    #     else:
+    #         raise RuntimeError(f"Las dimensiones no coinciden: features ({features.size()}) y learned_plane ({learned_plane.size()})")
+
+    #     # Continuar con el flujo de trabajo
+    #     verts = self.decoder(x)
+    #     sdf_outputs = self.sdfMlp(verts)
+    #     pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
+
+    #     # Aplica el renderer si es necesario
+    #     rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+
+    #     return rendered_output
+
     def forward(self, inputs):
         # Obtén las características de UNet++
         features = self.unet2(inputs)
 
-        # Ajusta learned_plane con padding si es necesario
-        if learned_plane.size(2) < features.size(2) or learned_plane.size(3) < features.size(3):
-            padding = (0, features.size(3) - learned_plane.size(3), 
-                    0, features.size(2) - learned_plane.size(2))  # (left, right, top, bottom)
-            learned_plane = F.pad(learned_plane, padding, "constant", 0)
+        print(f"Dimensiones de features: {features.size()}")
+        print(f"Dimensiones de learned_plane: {learned_plane.size()}")
 
-        # Verifica que las dimensiones coincidan antes de concatenar
-        if features.size(2) == learned_plane.size(2) and features.size(3) == learned_plane.size(3):
-            x = torch.cat([features, learned_plane], dim=1)
-        else:
-            raise RuntimeError(f"Las dimensiones no coinciden: features ({features.size()}) y learned_plane ({learned_plane.size()})")
-
-        # Continuar con el flujo de trabajo
-        verts = self.decoder(x)
-        sdf_outputs = self.sdfMlp(verts)
-        pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
-
-        # Aplica el renderer si es necesario
-        rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+        # Aquí puedes aplicar cualquiera de las soluciones anteriores...
 
         return rendered_output
+
 
 
 
