@@ -151,7 +151,7 @@ class CRM(nn.Module):
         # Aplica el renderer si es necesario
         rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
         
-    return rendered_output
+        return rendered_output
 
 
 
