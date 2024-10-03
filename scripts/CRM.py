@@ -103,6 +103,7 @@ class CRM(nn.Module):
     
     def forward(self, inputs):
         # Aplicar UNet++
+        print('zasz')
         features = self.unet2(inputs)
 
           # Verifica las dimensiones antes de la concatenación
