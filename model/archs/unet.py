@@ -74,6 +74,11 @@ class UNetPP(nn.Module):
 
             # Ajustar la dimensión de 768 a 256 para hacer match con x
             learned_plane = torch.nn.functional.interpolate(learned_plane, size=(256, 256), mode='bilinear', align_corners=False)
+
+            # Asegurarse de que learned_plane tenga los canales necesarios (ajustar a 29)
+            if learned_plane.shape[1] != 29:
+                learned_plane = torch.nn.Conv2d(learned_plane.shape[1], 29, kernel_size=1)(learned_plane)
+            
             print(f"learned_plane shape after resizing: {learned_plane.shape}")
             
             # Concatenar el tensor aprendido con el tensor de entrada
@@ -81,5 +86,6 @@ class UNetPP(nn.Module):
             print(f"Input shape after learned_plane concat: {x.shape}")
 
         return self.unet(x, t).sample
+
 
 
