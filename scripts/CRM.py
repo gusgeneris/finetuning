@@ -118,7 +118,7 @@ class CRM(nn.Module):
         x = features
 
         # Inicializa learned_plane con las dimensiones correctas
-        learned_plane = torch.randn_like(x)
+        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
 
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
@@ -136,6 +136,7 @@ class CRM(nn.Module):
         rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
         
         return rendered_output
+
 
 
 
