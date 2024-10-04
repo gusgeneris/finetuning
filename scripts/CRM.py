@@ -98,57 +98,57 @@ class CRM(nn.Module):
         # print(f"Dimensiones de inputs: {inputs.size()}")
             
 
-    def forward(self, inputs):
-        print('zasz')
-        print(f"Input shape: {inputs.shape}")
+   def forward(self, inputs):
+    print('zasz')
+    print(f"Input shape: {inputs.shape}")
 
-        # Redimensionar inputs a 256x256 si es necesario
-        if inputs.size(2) != 256 or inputs.size(3) != 256:
-            print(f"Redimensionando inputs de {inputs.size(2)}x{inputs.size(3)} a 256x256")
-            inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
+    # Redimensionar inputs a 256x256 si es necesario
+    if inputs.size(2) != 256 or inputs.size(3) != 256:
+        print(f"Redimensionando inputs de {inputs.size(2)}x{inputs.size(3)} a 256x256")
+        inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
 
-        try:
-            features = self.unet2(inputs)
-            print(f"Features shape after unet2: {features.shape}")
+    try:
+        features = self.unet2(inputs)
+        print(f"Features shape after unet2: {features.shape}")
 
-        except Exception as e:
-            print(f"Error in self.unet2: {e}")
-            return None
+    except Exception as e:
+        print(f"Error in self.unet2: {e}")
+        return None
 
-        x = features
+    x = features
 
-        # Inicializa learned_plane con las dimensiones correctas
-        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
+    # Inicializa learned_plane con las dimensiones correctas
+    learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
 
-        # Mover learned_plane al mismo dispositivo que el modelo
-        learned_plane = learned_plane.to(x.device)
+    # Mover learned_plane al mismo dispositivo que el modelo
+    learned_plane = learned_plane.to(x.device)
 
-        print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
+    print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
-        # Asegúrate de que learned_plane tenga las dimensiones correctas
-        if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
-            learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
+    # Asegúrate de que learned_plane tenga las dimensiones correctas
+    if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
+        learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
 
-        # Revisa las dimensiones después de la interpolación
-        print(f"learned_plane size after interpolation: {learned_plane.size()}")
+    # Revisa las dimensiones después de la interpolación
+    print(f"learned_plane size after interpolation: {learned_plane.size()}")
 
-        # Concatenar
-        try:
-            x = torch.cat([x, learned_plane], dim=1)
-            print(f"Concatenated x size: {x.size()}")
-        except Exception as e:
-            print(f"Error in concatenation: {e}")
-            return None
+    # Concatenar
+    try:
+        x = torch.cat([x, learned_plane], dim=1)
+        print(f"Concatenated x size: {x.size()}")
+    except Exception as e:
+        print(f"Error in concatenation: {e}")
+        return None
 
-        # Resto del procesamiento...
-        verts = self.decoder(features)
-        print(f"verts size: {verts.size()}")  # Verifica las dimensiones de verts
-        sdf_outputs = self.sdfMlp(verts)
-        print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
-        pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
-        rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+    # Resto del procesamiento...
+    verts = self.decoder(features)
+    print(f"verts size: {verts.size()}")  # Verifica las dimensiones de verts
+    sdf_outputs = self.sdfMlp(verts)
+    print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
+    pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
+    rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
 
-        return rendered_output
+    return rendered_output
 
 
 
