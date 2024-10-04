@@ -102,7 +102,8 @@ class CRM(nn.Module):
 
     def forward(self, inputs):
         print('zasz')
-        features = self.unet2(inputs)
+        print(f"Input shape: {inputs.shape}")  # Imprimir la forma de la entrada
+        features = self.unet2(inputs)  # Esto podría estar fallando 
 
         # Aquí asegúrate de que x es el tensor correcto que estás utilizando
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
