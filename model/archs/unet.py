@@ -44,10 +44,22 @@ class UNetPP(nn.Module):
         if in_channels > 12:
             self.learned_plane = torch.nn.parameter.Parameter(torch.zeros([1,in_channels-12,256,256*3]))
 
+    # def forward(self, x, t=256):
+    #     learned_plane = self.learned_plane
+    #     if x.shape[1] < self.in_channels:
+    #         learned_plane = einops.repeat(learned_plane, '1 C H W -> B C H W', B=x.shape[0]).to(x.device)
+    #         x = torch.cat([x, learned_plane], dim = 1)
+    #     return self.unet(x, t).sample
+
     def forward(self, x, t=256):
         learned_plane = self.learned_plane
+        print(f"Input shape before learned_plane concat: {x.shape}")
+
         if x.shape[1] < self.in_channels:
             learned_plane = einops.repeat(learned_plane, '1 C H W -> B C H W', B=x.shape[0]).to(x.device)
-            x = torch.cat([x, learned_plane], dim = 1)
+            print(f"learned_plane shape: {learned_plane.shape}")
+            x = torch.cat([x, learned_plane], dim=1)
+            print(f"Input shape after learned_plane concat: {x.shape}")
+
         return self.unet(x, t).sample
 
