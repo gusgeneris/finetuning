@@ -102,10 +102,11 @@ class CRM(nn.Module):
 
         # print(f"Dimensiones de inputs: {inputs.size()}")
             
-
     def forward(self, inputs):
-        print('zasz')
-        print(f"Input shape: {inputs.shape}")
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Mover inputs al dispositivo correcto desde el principio
+        inputs = inputs.to(device)
 
         # Redimensionar inputs a 256x256 si es necesario
         if inputs.size(2) != 256 or inputs.size(3) != 256:
@@ -115,37 +116,16 @@ class CRM(nn.Module):
         try:
             features = self.unet2(inputs)
             print(f"Features shape after unet2: {features.shape}")
-
         except Exception as e:
             print(f"Error in self.unet2: {e}")
             return None
 
-        x = features
-
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        inputs = inputs.to(device)
-        
-        # self.unet2 = self.unet2.to(device)
-       
-        # Inicializa learned_plane con las dimensiones correctas
-        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
-
-        # Mover learned_plane al mismo dispositivo que el modelo
-        # learned_plane = learned_plane.to(x.device)
-        learned_plane = learned_plane.to(device)
-        print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
-
-        # Asegúrate de que learned_plane tenga las dimensiones correctas
-        if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
-            learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
-
-        # Revisa las dimensiones después de la interpolación
-        print(f"learned_plane size after interpolation: {learned_plane.size()}")
+        # Inicializa learned_plane en el dispositivo correcto
+        learned_plane = torch.randn(inputs.size(0), 32, inputs.size(2), inputs.size(3), device=device)
 
         # Concatenar
         try:
-            x = torch.cat([x, learned_plane], dim=1)
+            x = torch.cat([features, learned_plane], dim=1)
             print(f"Concatenated x size: {x.size()}")
         except Exception as e:
             print(f"Error in concatenation: {e}")
