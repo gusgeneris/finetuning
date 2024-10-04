@@ -99,7 +99,7 @@ for epoch in range(num_epochs):
         outputs = model(inputs)  # Esto debería llamar a model.forward()
         
         # Verifica la forma de las salidas
-        print(f'Outputs shape: {outputs.shape}')
+        # print(f'Outputs shape: {outputs.shape}')
 
         loss = criterion(outputs, targets)
         loss.backward()
