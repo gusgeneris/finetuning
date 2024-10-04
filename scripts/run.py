@@ -39,6 +39,7 @@ model = CRM(specs).to("cuda")  # Definir correctamente la clase CRM
 model.train() 
 model.load_state_dict(torch.load(model_path))
 print("Pesos cargados con éxito.")
+model = model.to(device)
 
 # Congelar las capas iniciales del modelo para mantener las características aprendidas
 for param in model.parameters():
@@ -89,26 +90,38 @@ for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
     for i, data in enumerate(train_loader, 0):
+        # Obtener inputs y targets del loader
         inputs, targets = data
+        
+        # Mover los inputs y targets al dispositivo (CPU o GPU)
         inputs, targets = inputs.to(device), targets.to(device)
 
-        # Verifica la forma de los inputs y targets
+        # Verificar la forma de los inputs y targets
         print(f'Inputs shape: {inputs.shape}, Targets shape: {targets.shape}')
 
+        # Poner a cero los gradientes del optimizador
         optimizer.zero_grad()
-        outputs = model(inputs)  # Esto debería llamar a model.forward()
-        
-        # Verifica la forma de las salidas
-        # print(f'Outputs shape: {outputs.shape}')
 
+        # Pasar los inputs al modelo
+        outputs = model(inputs)
+
+        # Calcular la pérdida
         loss = criterion(outputs, targets)
+
+        # Backpropagation (gradientes)
         loss.backward()
+
+        # Actualizar los parámetros
         optimizer.step()
 
+        # Acumular la pérdida para monitoreo
         running_loss += loss.item()
+        
+        # Mostrar la pérdida cada 10 lotes
         if i % 10 == 9:
             print(f'[{epoch + 1}, {i + 1}] pérdida: {running_loss / 10:.3f}')
             running_loss = 0.0
+
 
 # Evaluación en el conjunto de prueba
 model.eval()
