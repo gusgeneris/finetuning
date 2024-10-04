@@ -48,6 +48,11 @@ class CRM(nn.Module):
 
         self.unet2 = UNetPP(in_channels=self.dec.c_dim)
 
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Mueve tu modelo al dispositivo
+        self.unet2 = self.unet2.to(device)
+
         mlp_chnl_s = 3 if self.arch.fea_concat else 1  # 3 for queried triplane feature concatenation
         self.decoder = TetTexNet(plane_reso=self.dec.plane_resolution, fea_concat=self.arch.fea_concat)
 
@@ -118,7 +123,7 @@ class CRM(nn.Module):
         x = features
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        
+
         inputs = inputs.to(device)
         
         # self.unet2 = self.unet2.to(device)
