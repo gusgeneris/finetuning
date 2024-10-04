@@ -96,8 +96,7 @@ class CRM(nn.Module):
             print(f"MLP de pesos configurado con entrada de tamaño: {mlp_chnl_s * 32 * 8}")
 
         # print(f"Dimensiones de inputs: {inputs.size()}")
-        
-
+            
 
     def forward(self, inputs):
         print('zasz')
@@ -109,7 +108,7 @@ class CRM(nn.Module):
 
         try:
             features = self.unet2(inputs)
-            print(f"Features shape: {features.shape}")
+            print(f"Features shape after unet2: {features.shape}")
 
         except Exception as e:
             print(f"Error in self.unet2: {e}")
@@ -122,22 +121,30 @@ class CRM(nn.Module):
 
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
-        # Redimensionar learned_plane si es necesario
+        # Asegúrate de que learned_plane tenga las dimensiones correctas
         if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
             learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
 
+        # Revisa las dimensiones después de la interpolación
+        print(f"learned_plane size after interpolation: {learned_plane.size()}")
+
         # Concatenar
-        x = torch.cat([x, learned_plane], dim=1)
+        try:
+            x = torch.cat([x, learned_plane], dim=1)
+            print(f"Concatenated x size: {x.size()}")
+        except Exception as e:
+            print(f"Error in concatenation: {e}")
+            return None
 
         # Resto del procesamiento...
         verts = self.decoder(features)
+        print(f"verts size: {verts.size()}")  # Verifica las dimensiones de verts
         sdf_outputs = self.sdfMlp(verts)
+        print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
         rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
-        
+
         return rendered_output
-
-
 
 
 
