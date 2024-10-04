@@ -106,9 +106,6 @@ class CRM(nn.Module):
         if inputs.size(2) != 256 or inputs.size(3) != 256:
             print(f"Redimensionando inputs de {inputs.size(2)}x{inputs.size(3)} a 256x256")
             inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
-        # if inputs.size(2) != 768 or inputs.size(3) != 768:
-        #     inputs = F.interpolate(inputs, size=(768, 768), mode='bilinear', align_corners=False)
-        # print(f"Input shape after resize: {inputs.shape}")
 
         try:
             features = self.unet2(inputs)
@@ -120,9 +117,18 @@ class CRM(nn.Module):
 
         x = features
 
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
+        inputs = inputs.to(device)
+        
+        # self.unet2 = self.unet2.to(device)
+       
         # Inicializa learned_plane con las dimensiones correctas
         learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
 
+        # Mover learned_plane al mismo dispositivo que el modelo
+        # learned_plane = learned_plane.to(x.device)
+        learned_plane = learned_plane.to(device)
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
         # Asegúrate de que learned_plane tenga las dimensiones correctas
