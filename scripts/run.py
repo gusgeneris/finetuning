@@ -37,12 +37,13 @@ specs = json.load(open("/content/finetuning/configs/specs_objaverse_total.json")
 # Cargar el modelo preentrenado CRM (asegúrate de definir la clase CRM antes de cargar los pesos)
 model = CRM(specs).to("cuda")  # Definir correctamente la clase CRM
 model.train() 
-model.load_state_dict(torch.load(model_path, map_location=device))
-print("Pesos cargados con éxito.")
-
 
 # Entrenamiento del modelo
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model.load_state_dict(torch.load(model_path, map_location=device))
+print("Pesos cargados con éxito.")
+
 
 model = model.to(device)
 
