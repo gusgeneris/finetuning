@@ -101,38 +101,35 @@ class CRM(nn.Module):
 
     def forward(self, inputs):
         print('zasz')
-        print(f"Input shape: {inputs.shape}")  # Verificamos el tamaño del input
+        print(f"Input shape: {inputs.shape}")
 
-        # Intentamos agregar un chequeo antes de que falle
+        # Redimensionar inputs a 256x256 si es necesario
+        if inputs.size(2) != 256 or inputs.size(3) != 256:
+            inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
+
         try:
-            # Aquí puedes verificar las dimensiones del input justo antes de la llamada que falla
-            if hasattr(self.unet2, 'forward'):
-                print(f"unet2 input shape: {inputs.shape}")  # Verificar entrada de self.unet2
-            
-            # Llamamos a self.unet2 y capturamos si ocurre un error
             features = self.unet2(inputs)
-            print(f"Features shape: {features.shape}")  # Verificar la salida de unet2
+            print(f"Features shape: {features.shape}")
 
         except Exception as e:
             print(f"Error in self.unet2: {e}")
-            print(f"unet2 failed with input size: {inputs.size()}")
-            return None  # Salimos si hay un error
+            return None
 
-        # Continuamos con el procesamiento solo si no hubo errores en self.unet2
-        x = features  # Suponemos que esto es lo que necesitas
-        learned_plane = torch.randn_like(x)# Inicializa o calcula learned_plane aquí
+        x = features
 
-        # Imprimimos las dimensiones antes de concatenar
+        # Inicializa learned_plane con las dimensiones correctas
+        learned_plane = torch.randn_like(x)
+
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
-        # Redimensionamos si es necesario
+        # Redimensionar learned_plane si es necesario
         if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
             learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
 
-        # Concatenamos
+        # Concatenar
         x = torch.cat([x, learned_plane], dim=1)
 
-        # Continuamos con el procesamiento final
+        # Resto del procesamiento...
         verts = self.decoder(features)
         sdf_outputs = self.sdfMlp(verts)
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
