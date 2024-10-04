@@ -102,11 +102,12 @@ class CRM(nn.Module):
         print('zasz')
         print(f"Input shape: {inputs.shape}")
 
-        # Redimensionar inputs a 256x256 si es necesario
-       if inputs.size(2) != 768 or inputs.size(3) != 768:
-
-        print(f"Redimensionando inputs de {inputs.size(2)}x{inputs.size(3)} a 768x768")
-        inputs = F.interpolate(inputs, size=(768, 768), mode='bilinear', align_corners=False)
+        # # Redimensionar inputs a 256x256 si es necesario
+        # if inputs.size(2) != 256 or inputs.size(3) != 256:
+        #     print(f"Redimensionando inputs de {inputs.size(2)}x{inputs.size(3)} a 256x256")
+        #     inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
+        if inputs.size(2) != 768 or inputs.size(3) != 768:
+            inputs = F.interpolate(inputs, size=(768, 768), mode='bilinear', align_corners=False)
         print(f"Input shape after resize: {inputs.shape}")
 
         try:
