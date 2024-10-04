@@ -104,8 +104,6 @@ class CRM(nn.Module):
             
     def forward(self, inputs):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        # Mover inputs al dispositivo correcto desde el principio
         inputs = inputs.to(device)
 
         # Redimensionar inputs a 256x256 si es necesario
@@ -138,6 +136,10 @@ class CRM(nn.Module):
         print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
         rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+        
+        # Limpiar memoria no utilizada
+        del features, learned_plane, x
+        torch.cuda.empty_cache()
 
         return rendered_output
 
