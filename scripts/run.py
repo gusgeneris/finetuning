@@ -37,7 +37,7 @@ specs = json.load(open("/content/finetuning/configs/specs_objaverse_total.json")
 # Cargar el modelo preentrenado CRM (asegúrate de definir la clase CRM antes de cargar los pesos)
 model = CRM(specs).to("cuda")  # Definir correctamente la clase CRM
 model.train() 
-model.load_state_dict(torch.load(model_path))
+model.load_state_dict(torch.load(model_path, map_location=device))
 print("Pesos cargados con éxito.")
 
 
@@ -104,7 +104,9 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
 
         # Pasar los inputs al modelo
-        outputs = model(inputs)
+        outputs = model(inputs) 
+        if outputs is None:
+            raise ValueError("El modelo no está generando salidas válidas.")
 
         # Calcular la pérdida
         loss = criterion(outputs, targets)
