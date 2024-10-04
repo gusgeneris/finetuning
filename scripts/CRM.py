@@ -120,7 +120,7 @@ class CRM(nn.Module):
 
         # Continuamos con el procesamiento solo si no hubo errores en self.unet2
         x = features  # Suponemos que esto es lo que necesitas
-        learned_plane = # Inicializa o calcula learned_plane aquí
+        learned_plane = torch.randn_like(x)# Inicializa o calcula learned_plane aquí
 
         # Imprimimos las dimensiones antes de concatenar
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
