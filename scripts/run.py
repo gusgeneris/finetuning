@@ -39,6 +39,11 @@ model = CRM(specs).to("cuda")  # Definir correctamente la clase CRM
 model.train() 
 model.load_state_dict(torch.load(model_path))
 print("Pesos cargados con éxito.")
+
+
+# Entrenamiento del modelo
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 model = model.to(device)
 
 # Congelar las capas iniciales del modelo para mantener las características aprendidas
@@ -60,10 +65,6 @@ optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr
 # Función de pérdida (ajustar si es necesario según la tarea)
 # Usar CrossEntropyLoss si es una tarea de clasificación
 criterion = nn.CrossEntropyLoss()
-
-# Entrenamiento del modelo
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
 
 num_epochs = 10
 # for epoch in range(num_epochs):
