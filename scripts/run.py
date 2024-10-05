@@ -40,15 +40,17 @@ model.train()
 
 # Mover el modelo a la GPU antes de cargar los pesos
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 # Asegúrate de que cada submódulo esté en el dispositivo correcto
 model = model.to(device)
 for name, module in model.named_modules():
-    module.to(device)  # Mover cada sub-módulo a GPU
-    print(f'{name} is on device: {next(module.parameters()).device}')
-
-# Verifica si los tensores están en el mismo dispositivo antes de pasar por unet2
-print(f"Input tensor device: {inputs.device}")
-print(f"UNet2 weights device: {next(model.unet2.parameters()).device}")
+    # Solo imprime si el módulo tiene parámetros
+    if any(module.parameters()):
+        module.to(device)
+        print(f'{name} is on device: {next(module.parameters()).device}')
+    else:
+        print(f'{name} does not have parameters.')
 
 # Cargar los pesos preentrenados en el mismo dispositivo que el modelo
 model.load_state_dict(torch.load(model_path, map_location=device))
@@ -94,6 +96,11 @@ for epoch in range(num_epochs):
 
         # Verificar la forma de los inputs y targets
         print(f'Inputs shape: {inputs.shape}, Targets shape: {targets.shape}')
+
+        print(f"Input tensor device: {inputs.device}")
+        print(f"UNet2 weights device: {next(model.unet2.parameters()).device}")
+        inputs = inputs.to(device)
+
 
         # Poner a cero los gradientes del optimizador
         optimizer.zero_grad()
