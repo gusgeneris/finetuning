@@ -46,8 +46,10 @@ model = CRM(specs).to(device)
 model.load_state_dict(torch.load(model_path, map_location=device))
 print("Pesos cargados con éxito.")
 
-
+# Asegúrate de que todas las capas del modelo también estén en el mismo dispositivo
 model = model.to(device)
+for name, module in model.named_modules():
+    module.to(device)  
 
 # Congelar las capas iniciales del modelo para mantener las características aprendidas
 for param in model.parameters():
