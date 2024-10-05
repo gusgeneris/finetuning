@@ -88,6 +88,7 @@ for epoch in range(num_epochs):
 
         # Pasar los inputs al modelo
         outputs = model(inputs) 
+        print(outputs)
         if outputs is None:
             raise ValueError("El modelo no está generando salidas válidas.")
 
