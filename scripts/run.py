@@ -86,7 +86,7 @@ for epoch in range(num_epochs):
         # Poner a cero los gradientes del optimizador
         optimizer.zero_grad()
 
-        print(inputs)
+        # print(inputs)
         # Pasar los inputs al modelo
         outputs = model(inputs) 
         print(outputs)
