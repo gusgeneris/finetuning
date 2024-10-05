@@ -46,7 +46,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
 for name, module in model.named_modules():
     # Solo imprime si el módulo tiene parámetros
-    if any(module.parameters()):
+    if len(list(module.parameters())) > 0:
         module.to(device)
         print(f'{name} is on device: {next(module.parameters()).device}')
     else:
