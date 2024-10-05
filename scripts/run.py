@@ -40,7 +40,15 @@ model.train()
 
 # Mover el modelo a la GPU antes de cargar los pesos
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = CRM(specs).to(device)
+# Asegúrate de que cada submódulo esté en el dispositivo correcto
+model = model.to(device)
+for name, module in model.named_modules():
+    module.to(device)  # Mover cada sub-módulo a GPU
+    print(f'{name} is on device: {next(module.parameters()).device}')
+
+# Verifica si los tensores están en el mismo dispositivo antes de pasar por unet2
+print(f"Input tensor device: {inputs.device}")
+print(f"UNet2 weights device: {next(model.unet2.parameters()).device}")
 
 # Cargar los pesos preentrenados en el mismo dispositivo que el modelo
 model.load_state_dict(torch.load(model_path, map_location=device))
