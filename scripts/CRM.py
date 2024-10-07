@@ -104,37 +104,43 @@ class CRM(nn.Module):
 #             import torch
 # import torch.nn.functional as F
 
+    def load_weights(self, model_path):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Cargar pesos y mover a GPU
+        self.load_state_dict(torch.load(model_path, map_location=device))
+        self.to(device)  # Mover el modelo al dispositivo
+
     def forward(self, inputs):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         inputs = inputs.to(device)
 
+        # Redimensionar inputs a 256x256 si es necesario
         if inputs.size(2) != 256 or inputs.size(3) != 256:
             inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
 
         try:
-            # Asegúrate de que self.unet2 esté en el dispositivo correcto
-            self.unet2.to(device)
-            features = self.unet2(inputs)
+            features = self.unet2(inputs.to(device))  # Asegúrate de que `inputs` esté en el dispositivo correcto
+            print(f"Features shape after unet2: {features.shape}")
         except Exception as e:
             print(f"Error in self.unet2: {e}")
             return None
 
-        # Asegúrate de que learned_plane esté en el dispositivo correcto
+        # Inicializa learned_plane en el dispositivo correcto
         learned_plane = torch.randn(inputs.size(0), 20, inputs.size(2), 768, device=device)
 
+        # Concatenar
         try:
             x = torch.cat([features, learned_plane], dim=1)
         except Exception as e:
             print(f"Error in concatenation: {e}")
             return None
 
-        # Asegúrate de que todas las partes estén en el dispositivo correcto antes de usarlas
+        # Procesamiento adicional
         verts = self.decoder(x.to(device))
         sdf_outputs = self.sdfMlp(verts.to(device))
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
-
-        rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
-
+        rendered_output = self.renderer(inputs.to(device), pred_sdf, deformation, verts.to(device))
+        
         return rendered_output
 
 
