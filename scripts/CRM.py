@@ -110,39 +110,58 @@ class CRM(nn.Module):
         self.load_state_dict(torch.load(model_path, map_location=device))
         self.to(device)  # Mover el modelo al dispositivo
 
+    
     def forward(self, inputs):
-        device = torch.device("cuda" )
-        inputs = inputs.to(device)
+        print('zasz')
+        print(f"Input shape: {inputs.shape}")
 
         # Redimensionar inputs a 256x256 si es necesario
         if inputs.size(2) != 256 or inputs.size(3) != 256:
+            print(f"Redimensionando inputs de {inputs.size(2)}x{inputs.size(3)} a 256x256")
             inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
 
         try:
-            features = self.unet2(inputs.to(device))  # Asegúrate de que `inputs` esté en el dispositivo correcto
+            features = self.unet2(inputs)
             print(f"Features shape after unet2: {features.shape}")
+
         except Exception as e:
             print(f"Error in self.unet2: {e}")
             return None
 
-        # Inicializa learned_plane en el dispositivo correcto
-        learned_plane = torch.randn(inputs.size(0), 20, inputs.size(2), 768, device=device)
+        x = features
+
+        # Inicializa learned_plane con las dimensiones correctas
+        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
+
+        # Mover learned_plane al mismo dispositivo que el modelo
+        learned_plane = learned_plane.to(x.device)
+
+        print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
+
+        # Asegúrate de que learned_plane tenga las dimensiones correctas
+        if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
+            learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
+
+        # Revisa las dimensiones después de la interpolación
+        print(f"learned_plane size after interpolation: {learned_plane.size()}")
 
         # Concatenar
         try:
-            x = torch.cat([features, learned_plane], dim=1)
+            x = torch.cat([x, learned_plane], dim=1)
+            print(f"Concatenated x size: {x.size()}")
         except Exception as e:
             print(f"Error in concatenation: {e}")
             return None
 
-        # Procesamiento adicional
-        verts = self.decoder(x.to(device))
-        sdf_outputs = self.sdfMlp(verts.to(device))
+        # Resto del procesamiento...
+        verts = self.decoder(features)
+        print(f"verts size: {verts.size()}")  # Verifica las dimensiones de verts
+        sdf_outputs = self.sdfMlp(verts)
+        print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
         pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
-        rendered_output = self.renderer(inputs.to(device), pred_sdf, deformation, verts.to(device))
-        
-        return rendered_output
+        rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
 
+        return rendered_output
 
 
 
