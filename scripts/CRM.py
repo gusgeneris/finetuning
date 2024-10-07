@@ -101,9 +101,14 @@ class CRM(nn.Module):
             print(f"MLP de pesos configurado con entrada de tamaño: {mlp_chnl_s * 32 * 8}")
 
         # print(f"Dimensiones de inputs: {inputs.size()}")
-            
+#             import torch
+# import torch.nn.functional as F
+
     def forward(self, inputs):
+        # Definir el dispositivo
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
+        # Mover los inputs al dispositivo
         inputs = inputs.to(device)
 
         # Redimensionar inputs a 256x256 si es necesario
@@ -112,6 +117,10 @@ class CRM(nn.Module):
             inputs = F.interpolate(inputs, size=(256, 256), mode='bilinear', align_corners=False)
 
         try:
+            # Mover unet2 al dispositivo si es necesario
+            self.unet2 = self.unet2.to(device)
+            
+            # Procesar los inputs con unet2
             features = self.unet2(inputs)
             print(f"Features shape after unet2: {features.shape}")
         except Exception as e:
@@ -119,9 +128,9 @@ class CRM(nn.Module):
             return None
 
         # Inicializa learned_plane en el dispositivo correcto
-        learned_plane = torch.randn(inputs.size(0), 32, inputs.size(2), inputs.size(3), device=device)
+        learned_plane = torch.randn(inputs.size(0), 20, inputs.size(2), 768, device=device)  # Ajusté a 20 canales
 
-        # Concatenar
+        # Concatenar features y learned_plane
         try:
             x = torch.cat([features, learned_plane], dim=1)
             print(f"Concatenated x size: {x.size()}")
@@ -129,21 +138,33 @@ class CRM(nn.Module):
             print(f"Error in concatenation: {e}")
             return None
 
-        # Resto del procesamiento...
-        verts = self.decoder(features)
-        print(f"verts size: {verts.size()}")  # Verifica las dimensiones de verts
-        sdf_outputs = self.sdfMlp(verts)
-        print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
-        pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
-        rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
-        
+        # Asegúrate de que x esté en el dispositivo correcto
+        x = x.to(device)
+
+        try:
+            # Decodificar las características y generar las predicciones
+            verts = self.decoder(features)
+            print(f"verts size: {verts.size()}")  # Verifica las dimensiones de verts
+
+            # Procesar los vértices con sdfMlp
+            sdf_outputs = self.sdfMlp(verts)
+            print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
+
+            # Dividir los resultados de sdfMlp en predicciones de sdf y deformaciones
+            pred_sdf, deformation = sdf_outputs[..., 0], sdf_outputs[..., 1:]
+
+            # Renderizar la salida
+            rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
+
+        except Exception as e:
+            print(f"Error during decoding or rendering: {e}")
+            return None
+
         # Limpiar memoria no utilizada
         del features, learned_plane, x
         torch.cuda.empty_cache()
 
         return rendered_output
-
-
 
 
 
