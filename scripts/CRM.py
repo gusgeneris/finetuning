@@ -48,7 +48,7 @@ class CRM(nn.Module):
 
         self.unet2 = UNetPP(in_channels=self.dec.c_dim)
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda")
 
             # Mueve tu modelo al dispositivo
         self.unet2 = self.unet2.to(device)
@@ -105,13 +105,13 @@ class CRM(nn.Module):
 # import torch.nn.functional as F
 
     def load_weights(self, model_path):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda" )
         # Cargar pesos y mover a GPU
         self.load_state_dict(torch.load(model_path, map_location=device))
         self.to(device)  # Mover el modelo al dispositivo
 
     def forward(self, inputs):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda" )
         inputs = inputs.to(device)
 
         # Redimensionar inputs a 256x256 si es necesario

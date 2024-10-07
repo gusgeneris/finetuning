@@ -185,7 +185,7 @@ model_path = hf_hub_download(repo_id="Zhengyi/CRM", filename="CRM.pth")
 specs = json.load(open("/content/finetuning/configs/specs_objaverse_total.json"))
 
 # Definir el dispositivo (GPU o CPU)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda")
 
 # Cargar el modelo preentrenado CRM
 model = CRM(specs).to(device)
