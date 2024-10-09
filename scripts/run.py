@@ -46,15 +46,25 @@ model.train()
 model.load_state_dict(torch.load(model_path, map_location=device))
 print("Pesos cargados con éxito.")
 
-# Congelar capas
-for param in model.parameters():
-    param.requires_grad = False
+# # Congelar capas
+# for param in model.parameters():
+#     param.requires_grad = False
 
-for param in model.decoder.parameters():
-    param.requires_grad = True
+# for param in model.decoder.parameters():
+#     param.requires_grad = True
 
-# Configurar el optimizador y la función de pérdida
-optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001)
+# # Configurar el optimizador y la función de pérdida
+# optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001)
+
+# Revisar parámetros antes de pasar al optimizador
+params = list(filter(lambda p: p.requires_grad, model.parameters()))
+print(f"Número de parámetros con gradiente: {len(params)}")
+
+# Inicializar el optimizador solo si hay parámetros con gradiente
+if len(params) > 0:
+    optimizer = optim.Adam(params, lr=0.0001)
+else:
+    raise ValueError("No hay parámetros con gradientes para optimizar.")
 criterion = nn.CrossEntropyLoss()
 
 num_epochs = 10
