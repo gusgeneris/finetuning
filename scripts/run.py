@@ -45,7 +45,7 @@ model.train()
 # Cargar los pesos
 model.load_state_dict(torch.load(model_path, map_location=device))
 print("Pesos cargados con éxito.")
-
+model = model.to(device)
 # # Congelar capas
 # for param in model.parameters():
 #     param.requires_grad = False
