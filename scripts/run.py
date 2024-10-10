@@ -46,6 +46,18 @@ model.train()
 model.load_state_dict(torch.load(model_path, map_location=device))
 print("Pesos cargados con éxito.")
 model = model.to(device)
+
+# Imprimir archivos en el conjunto de entrenamiento
+print("Archivos en el conjunto de entrenamiento:")
+for root, dirs, files in os.walk(train_path):
+    for file in files:
+        print(os.path.join(root, file))
+
+# Imprimir archivos en el conjunto de prueba
+print("Archivos en el conjunto de prueba:")
+for root, dirs, files in os.walk(test_path):
+    for file in files:
+        print(os.path.join(root, file))
 # # Congelar capas
 # for param in model.parameters():
 #     param.requires_grad = False
