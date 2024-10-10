@@ -56,6 +56,13 @@ model = model.to(device)
 # # Configurar el optimizador y la función de pérdida
 # optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001)
 
+
+# Verificación del dispositivo del modelo completo
+print(f"Dispositivo del modelo: {next(model.parameters()).device}")
+
+
+print(f"Dispositivo de self.unet2: {next(model.unet2.parameters()).device}")
+
 # Revisar parámetros antes de pasar al optimizador
 params = list(filter(lambda p: p.requires_grad, model.parameters()))
 print(f"Número de parámetros con gradiente: {len(params)}")
@@ -77,11 +84,14 @@ for epoch in range(num_epochs):
         inputs, targets = data
         inputs, targets = inputs.to(device), targets.to(device)
 
+        print(f"Dispositivo de inputs: {inputs.device}")
         # Chequeo de formas
         print(f'Inputs shape: {inputs.shape}, Targets shape: {targets.shape}')
 
         optimizer.zero_grad()
         outputs = model(inputs)
+
+        print(f"Dispositivo de outputs: {outputs.device}")
 
         # Chequeo de salidas
         if outputs is None or outputs.shape[0] != targets.shape[0]:

@@ -142,6 +142,9 @@ class CRM(nn.Module):
         # # Mover learned_plane al mismo dispositivo que el modelo
         # learned_plane = learned_plane.to(x.device)
 
+
+        print(f"Dispositivo de learned_plane: {learned_plane.device}")
+
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
         # Asegúrate de que learned_plane tenga las dimensiones correctas
