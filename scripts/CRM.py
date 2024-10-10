@@ -160,7 +160,13 @@ class CRM(nn.Module):
             return None
 
         # Resto del procesamiento...
-        verts = self.decoder(features)
+        # verts = self.decoder(features)
+
+        query = torch.rand(features.size(0), 3, 1000).to(device)  # (batch_size, 3, num_points)
+        
+        # Decodificación utilizando TetTexNet
+        verts = self.decoder(features, query)  # Asegúrate de pasar 'query'
+
         print(f"verts size: {verts.size()}")  # Verifica las dimensiones de verts
         sdf_outputs = self.sdfMlp(verts)
         print(f"sdf_outputs size: {sdf_outputs.size()}")  # Verifica las dimensiones de sdf_outputs
