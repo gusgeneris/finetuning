@@ -27,10 +27,10 @@ transform = transforms.Compose([
 ])
 
 train_data = datasets.ImageFolder('/content/drive/MyDrive/data/train', transform=transform)
-train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
+train_loader = DataLoader(train_data, batch_size=16, shuffle=True)
 
 test_data = datasets.ImageFolder('/content/drive/MyDrive/data/test', transform=transform)
-test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
+test_loader = DataLoader(test_data, batch_size=16, shuffle=False)
 
 # Descargar pesos preentrenados
 model_path = hf_hub_download(repo_id="Zhengyi/CRM", filename="CRM.pth")

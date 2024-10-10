@@ -38,10 +38,10 @@
 
 # # Cargar los datos de entrenamiento y prueba
 # train_data = datasets.ImageFolder(train_dir, transform=transform)
-# train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
+# train_loader = DataLoader(train_data, batch_size=16, shuffle=True)
 
 # test_data = datasets.ImageFolder(test_dir, transform=transform)
-# test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
+# test_loader = DataLoader(test_data, batch_size=16, shuffle=False)
 
 # # Verificar si las clases se detectan correctamente
 # print(f'Clases detectadas: {train_data.classes}')
@@ -138,12 +138,12 @@ transform = transforms.Compose([
 ])
 
 train_data = datasets.ImageFolder('/content/drive/MyDrive/data/train', transform=transform)
-train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
+train_loader = DataLoader(train_data, batch_size=16, shuffle=True)
 
 # test_data = datasets.ImageFolder('data/test', transform=transform)
 
 test_data = datasets.ImageFolder('/content/drive/MyDrive/data/test', transform=transform)
-test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
+test_loader = DataLoader(test_data, batch_size=16, shuffle=False)
 
 # Descargar el modelo desde Hugging Face Hub
 model_path = hf_hub_download(repo_id="Zhengyi/CRM", filename="CRM.pth")
