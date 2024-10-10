@@ -90,7 +90,14 @@ for epoch in range(num_epochs):
         print(f'Inputs shape: {inputs.shape}, Targets shape: {targets.shape}')
 
         optimizer.zero_grad()
-        outputs = model(inputs)
+        # outputs = model(inputs)
+
+        batch_size = inputs.shape[0]  # Obtener el tamaño del batch a partir de 'inputs'
+        num_points = 500  # Número de puntos de consulta
+        query = torch.rand(batch_size, num_points, 3) * 2 - 1  # Generar coordenadas XYZ en [-1, 1]
+
+        outputs = model(inputs, query) 
+
 
         print(f"Dispositivo de outputs: {outputs}")
 
@@ -115,7 +122,14 @@ with torch.no_grad():
     for data in test_loader:
         inputs, targets = data
         inputs, targets = inputs.to(device), targets.to(device)
-        outputs = model(inputs)
+
+        batch_size = inputs.shape[0]  # Obtener el tamaño del batch a partir de 'inputs'
+        num_points = 500  # Número de puntos de consulta
+        query = torch.rand(batch_size, num_points, 3) * 2 - 1  # Generar coordenadas XYZ en [-1, 1]
+
+        outputs = model(inputs, query) 
+
+        # outputs = model(inputs)
         if outputs is not None:
             print(f"Dispositivo de outputs: {outputs.device}")
         loss = criterion(outputs, targets)
