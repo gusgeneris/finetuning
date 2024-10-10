@@ -162,7 +162,7 @@ class CRM(nn.Module):
         # Resto del procesamiento...
         # verts = self.decoder(features)
 
-        query = torch.rand(features.size(0), 3, 1000).to(device)  # (batch_size, 3, num_points)
+        query = torch.rand(features.size(0), 3, 256).to(device)  # (batch_size, 3, num_points)
         query = (query * 2) - 1  # Escala de [0, 1] a [-1, 1]
 
         # Decodificación utilizando TetTexNet
