@@ -48,20 +48,20 @@ print("Pesos cargados con éxito.")
 model = model.to(device)
 
 
-train_path = '/content/drive/MyDrive/data/train'
-test_path = '/content/drive/MyDrive/data/test'
+# train_path = '/content/drive/MyDrive/data/train'
+# test_path = '/content/drive/MyDrive/data/test'
 
-# Imprimir archivos en el conjunto de entrenamiento
-print("Archivos en el conjunto de entrenamiento:")
-for root, dirs, files in os.walk(train_path):
-    for file in files:
-        print(os.path.join(root, file))
+# # Imprimir archivos en el conjunto de entrenamiento
+# print("Archivos en el conjunto de entrenamiento:")
+# for root, dirs, files in os.walk(train_path):
+#     for file in files:
+#         print(os.path.join(root, file))
 
-# Imprimir archivos en el conjunto de prueba
-print("Archivos en el conjunto de prueba:")
-for root, dirs, files in os.walk(test_path):
-    for file in files:
-        print(os.path.join(root, file))
+# # Imprimir archivos en el conjunto de prueba
+# print("Archivos en el conjunto de prueba:")
+# for root, dirs, files in os.walk(test_path):
+#     for file in files:
+#         print(os.path.join(root, file))
 # # Congelar capas
 # for param in model.parameters():
 #     param.requires_grad = False
