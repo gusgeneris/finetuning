@@ -134,12 +134,12 @@ class CRM(nn.Module):
 
         x = features
 
-        # Inicializa learned_plane con las dimensiones correctas
-        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
-
 
         device = torch.device("cuda")
         learned_plane = learned_plane.to(device)
+        # Inicializa learned_plane con las dimensiones correctas
+        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
+
 
         # # Mover learned_plane al mismo dispositivo que el modelo
         # learned_plane = learned_plane.to(x.device)
