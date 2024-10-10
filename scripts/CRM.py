@@ -46,8 +46,8 @@ class CRM(nn.Module):
 
         self.geo_type = specs["Train"].get("geo_type", "flex") # "dmtet" or "flex"
 
-        # self.unet2 = UNetPP(in_channels=self.dec.c_dim)
-         self.unet2 = UNetPP(in_channels=specs['c_dim'])  # Asegúrate de que 'c_dim' existe en 'specs'
+        self.unet2 = UNetPP(in_channels=self.dec.c_dim)
+        #  self.unet2 = UNetPP(in_channels=specs['c_dim'])  # Asegúrate de que 'c_dim' existe en 'specs'
 
 
         device = torch.device("cuda")
