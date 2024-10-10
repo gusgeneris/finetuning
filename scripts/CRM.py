@@ -117,6 +117,8 @@ class CRM(nn.Module):
         print('zasz')
         print(f"Input shape: {inputs.shape}")
 
+        print(f"Dispositivo de inputs: {inputs.device}")
+
         # Redimensionar inputs a 256x256 si es necesario
         if inputs.size(2) != 256 or inputs.size(3) != 256:
             print(f"Redimensionando inputs de {inputs.size(2)}x{inputs.size(3)} a 256x256")
