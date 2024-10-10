@@ -92,7 +92,7 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         outputs = model(inputs)
 
-        print(f"Dispositivo de outputs: {outputs.device}")
+        print(f"Dispositivo de outputs: {outputs}")
 
         # Chequeo de salidas
         if outputs is None or outputs.shape[0] != targets.shape[0]:
