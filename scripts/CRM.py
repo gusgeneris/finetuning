@@ -48,10 +48,6 @@ class CRM(nn.Module):
 
         self.unet2 = UNetPP(in_channels=self.dec.c_dim)
 
-        device = torch.device("cuda")
-
-            # Mueve tu modelo al dispositivo
-        self.unet2 = self.unet2.to(device)
 
         mlp_chnl_s = 3 if self.arch.fea_concat else 1  # 3 for queried triplane feature concatenation
         self.decoder = TetTexNet(plane_reso=self.dec.plane_resolution, fea_concat=self.arch.fea_concat)
@@ -78,6 +74,12 @@ class CRM(nn.Module):
 
             # Configuración de UNet++
         self.unet2 = UNetPP(in_channels=self.dec.c_dim)  # Configurar UNet++
+
+
+        device = torch.device("cuda")
+
+            # Mueve tu modelo al dispositivo
+        self.unet2 = self.unet2.to(device)
         print(f"UNet++ configurado con in_channels: {self.dec.c_dim}")
 
         # Decodificador
@@ -133,8 +135,12 @@ class CRM(nn.Module):
         # Inicializa learned_plane con las dimensiones correctas
         learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
 
-        # Mover learned_plane al mismo dispositivo que el modelo
-        learned_plane = learned_plane.to(x.device)
+
+        device = torch.device("cuda")
+        learned_plane = learned_plane.to(device)
+
+        # # Mover learned_plane al mismo dispositivo que el modelo
+        # learned_plane = learned_plane.to(x.device)
 
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
