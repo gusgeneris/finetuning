@@ -21,7 +21,7 @@ class TetTexNet(nn.Module):
         triplane_feature['xy'] = rolled_out_feature[:, :, :, 0: plane_reso]
         triplane_feature['yz'] = rolled_out_feature[:, :, :, plane_reso: 2 * plane_reso]
         triplane_feature['zx'] = rolled_out_feature[:, :, :, 2 * plane_reso:]
-
+        print("plane_feature shape before resizing:", plane_feature.shape)
         query_feature_xy = self.sample_plane_feature(query, triplane_feature['xy'], 'xy')
         query_feature_yz = self.sample_plane_feature(query, triplane_feature['yz'], 'yz')
         query_feature_zx = self.sample_plane_feature(query, triplane_feature['zx'], 'zx')
