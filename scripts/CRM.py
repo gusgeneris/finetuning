@@ -115,12 +115,12 @@ class CRM(nn.Module):
     #     self.to(device)  # Mover el modelo al dispositivo
             
     def forward(self, inputs):
-
-        # Asegúrate de que los inputs estén en el dispositivo correcto
-        inputs = inputs.to(next(self.unet2.parameters()).device)
-
+        device = torch.device("cuda")
+        print('zasz')
         print(f"Input shape: {inputs.shape}")
+
         print(f"Dispositivo de inputs: {inputs.device}")
+        inputs = inputs.to(next(self.unet2.parameters()).device)
 
         # Redimensionar inputs a 256x256 si es necesario
         if inputs.size(2) != 256 or inputs.size(3) != 256:
@@ -136,17 +136,22 @@ class CRM(nn.Module):
             return None
 
         x = features
-        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3), device=inputs.device)
+
+        # Inicializa learned_plane con las dimensiones correctas
+        learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3), device=x.device)  # Mueve learned_plane al dispositivo correcto
 
         print(f"Dispositivo de learned_plane: {learned_plane.device}")
+
         print(f"x size: {x.size()}, learned_plane size: {learned_plane.size()}")
 
-        # Concatenar learned_plane a x
+        # Asegúrate de que learned_plane tenga las dimensiones correctas
         if x.size(2) != learned_plane.size(2) or x.size(3) != learned_plane.size(3):
             learned_plane = F.interpolate(learned_plane, size=(x.size(2), x.size(3)), mode='bilinear', align_corners=False)
 
+        # Revisa las dimensiones después de la interpolación
         print(f"learned_plane size after interpolation: {learned_plane.size()}")
 
+        # Concatenar
         try:
             x = torch.cat([x, learned_plane], dim=1)
             print(f"Concatenated x size: {x.size()}")
@@ -163,6 +168,7 @@ class CRM(nn.Module):
         rendered_output = self.renderer(inputs, pred_sdf, deformation, verts)
 
         return rendered_output
+
 
 
 
