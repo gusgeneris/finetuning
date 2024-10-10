@@ -108,11 +108,11 @@ class CRM(nn.Module):
 #             import torch
 # import torch.nn.functional as F
 
-    def load_weights(self, model_path):
-        device = torch.device("cuda" )
-        # Cargar pesos y mover a GPU
-        self.load_state_dict(torch.load(model_path, map_location=device))
-        self.to(device)  # Mover el modelo al dispositivo
+    # def load_weights(self, model_path):
+    #     device = torch.device("cuda" )
+    #     # Cargar pesos y mover a GPU
+    #     self.load_state_dict(torch.load(model_path, map_location=device))
+    #     self.to(device)  # Mover el modelo al dispositivo
             
     def forward(self, inputs):
 
