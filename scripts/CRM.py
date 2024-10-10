@@ -46,6 +46,11 @@ class CRM(nn.Module):
 
         self.geo_type = specs["Train"].get("geo_type", "flex") # "dmtet" or "flex"
 
+        device = torch.device("cuda")
+
+            # Mueve tu modelo al dispositivo
+        self.unet2 = self.unet2.to(device)
+
         self.unet2 = UNetPP(in_channels=self.dec.c_dim)
 
 
@@ -76,10 +81,6 @@ class CRM(nn.Module):
         self.unet2 = UNetPP(in_channels=self.dec.c_dim)  # Configurar UNet++
 
 
-        device = torch.device("cuda")
-
-            # Mueve tu modelo al dispositivo
-        self.unet2 = self.unet2.to(device)
         print(f"UNet++ configurado con in_channels: {self.dec.c_dim}")
 
         # Decodificador
