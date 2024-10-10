@@ -88,24 +88,24 @@ class UNetPP(nn.Module):
     #     return self.unet(x, t).sample
 
         def forward(self, x, t=256):
-        learned_plane = self.learned_plane
-        print(f"Input shape before learned_plane concat: {x.shape}")
+            learned_plane = self.learned_plane
+            print(f"Input shape before learned_plane concat: {x.shape}")
 
-        if x.shape[1] < self.in_channels:
-            learned_plane = einops.repeat(learned_plane, '1 C H W -> B C H W', B=x.shape[0]).to(x.device)
-            print(f"learned_plane shape before resizing: {learned_plane.shape}")
+            if x.shape[1] < self.in_channels:
+                learned_plane = einops.repeat(learned_plane, '1 C H W -> B C H W', B=x.shape[0]).to(x.device)
+                print(f"learned_plane shape before resizing: {learned_plane.shape}")
 
-            learned_plane = torch.nn.functional.interpolate(learned_plane, size=(256, 256), mode='bilinear', align_corners=False)
+                learned_plane = torch.nn.functional.interpolate(learned_plane, size=(256, 256), mode='bilinear', align_corners=False)
 
-            if learned_plane.shape[1] != 29:
-                learned_plane = torch.nn.Conv2d(learned_plane.shape[1], 29, kernel_size=1).to(x.device)(learned_plane)
+                if learned_plane.shape[1] != 29:
+                    learned_plane = torch.nn.Conv2d(learned_plane.shape[1], 29, kernel_size=1).to(x.device)(learned_plane)
 
-            print(f"learned_plane shape after resizing: {learned_plane.shape}")
+                print(f"learned_plane shape after resizing: {learned_plane.shape}")
 
-            x = torch.cat([x, learned_plane], dim=1)
-            print(f"Input shape after learned_plane concat: {x.shape}")
+                x = torch.cat([x, learned_plane], dim=1)
+                print(f"Input shape after learned_plane concat: {x.shape}")
 
-        return self.unet(x.to(x.device), t).sample
+            return self.unet(x.to(x.device), t).sample
 
 
 
