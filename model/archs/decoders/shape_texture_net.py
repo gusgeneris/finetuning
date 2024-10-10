@@ -58,5 +58,6 @@ class TetTexNet(nn.Module):
         # which is within [-scale, scale] as specified by encoder's calling of coordinate2index()
         vgrid = 1.0 * xy
         sampled_feat = F.grid_sample(plane_feature, vgrid, padding_mode='border', align_corners=True, mode='bilinear').squeeze(-1)
-
+        print("vgrid shape:", vgrid.shape)
+        print("plane_feature shape:", plane_feature.shape)
         return sampled_feat
