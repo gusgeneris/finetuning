@@ -84,6 +84,7 @@ for epoch in range(num_epochs):
         inputs, targets = data
         inputs, targets = inputs.to(device), targets.to(device)
 
+
         print(f"Dispositivo de inputs: {inputs.device}")
         # Chequeo de formas
         print(f'Inputs shape: {inputs.shape}, Targets shape: {targets.shape}')
@@ -115,6 +116,8 @@ with torch.no_grad():
         inputs, targets = data
         inputs, targets = inputs.to(device), targets.to(device)
         outputs = model(inputs)
+        if outputs is not None:
+            print(f"Dispositivo de outputs: {outputs.device}")
         loss = criterion(outputs, targets)
         test_loss += loss.item()
 

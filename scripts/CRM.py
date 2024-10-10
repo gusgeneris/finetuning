@@ -116,10 +116,13 @@ class CRM(nn.Module):
 
     
     def forward(self, inputs):
+
+        device = torch.device("cuda")
         print('zasz')
         print(f"Input shape: {inputs.shape}")
 
         print(f"Dispositivo de inputs: {inputs.device}")
+        inputs = inputs.to(next(self.unet2.parameters()).device)
 
         # Redimensionar inputs a 256x256 si es necesario
         if inputs.size(2) != 256 or inputs.size(3) != 256:
@@ -137,7 +140,6 @@ class CRM(nn.Module):
         x = features
 
 
-        device = torch.device("cuda")
         learned_plane = learned_plane.to(device)
         # Inicializa learned_plane con las dimensiones correctas
         learned_plane = torch.randn(x.size(0), 32, x.size(2), x.size(3))  # Asegúrate de que learned_plane tenga la misma altura y anchura que x
