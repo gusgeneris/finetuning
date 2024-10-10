@@ -47,6 +47,10 @@ model.load_state_dict(torch.load(model_path, map_location=device))
 print("Pesos cargados con éxito.")
 model = model.to(device)
 
+
+train_path = '/content/drive/MyDrive/data/train'
+test_path = '/content/drive/MyDrive/data/test'
+
 # Imprimir archivos en el conjunto de entrenamiento
 print("Archivos en el conjunto de entrenamiento:")
 for root, dirs, files in os.walk(train_path):
