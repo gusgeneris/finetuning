@@ -46,13 +46,14 @@ class CRM(nn.Module):
 
         self.geo_type = specs["Train"].get("geo_type", "flex") # "dmtet" or "flex"
 
+        # self.unet2 = UNetPP(in_channels=self.dec.c_dim)
+         self.unet2 = UNetPP(in_channels=specs['c_dim'])  # Asegúrate de que 'c_dim' existe en 'specs'
+
+
         device = torch.device("cuda")
 
             # Mueve tu modelo al dispositivo
         self.unet2 = self.unet2.to(device)
-
-        self.unet2 = UNetPP(in_channels=self.dec.c_dim)
-
 
         mlp_chnl_s = 3 if self.arch.fea_concat else 1  # 3 for queried triplane feature concatenation
         self.decoder = TetTexNet(plane_reso=self.dec.plane_resolution, fea_concat=self.arch.fea_concat)
